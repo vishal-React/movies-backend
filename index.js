@@ -11,71 +11,7 @@ app.use(cors());
 
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
-// ✅ Videos (e.g. /movie/123/videos)
-app.get("/api/:category/:id/videos", async (req, res) => {
-  const { category, id } = req.params;
-  try {
-    const response = await axios.get(
-      `${TMDB_BASE_URL}/${category}/${id}/videos`,
-      {
-        params: { api_key: process.env.TMDB_API_KEY },
-      }
-    );
-    res.json(response.data);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch videos" });
-  }
-});
-
-// ✅ Credits (e.g. /movie/123/credits)
-app.get("/api/:category/:id/credits", async (req, res) => {
-  const { category, id } = req.params;
-  try {
-    const response = await axios.get(
-      `${TMDB_BASE_URL}/${category}/${id}/credits`,
-      {
-        params: { api_key: process.env.TMDB_API_KEY },
-      }
-    );
-    res.json(response.data);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch credits" });
-  }
-});
-
-// ✅ Similar (e.g. /movie/123/similar)
-app.get("/api/:category/:id/similar", async (req, res) => {
-  const { category, id } = req.params;
-  try {
-    const response = await axios.get(
-      `${TMDB_BASE_URL}/${category}/${id}/similar`,
-      {
-        params: { api_key: process.env.TMDB_API_KEY },
-      }
-    );
-    res.json(response.data);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch similar movies" });
-  }
-});
-
-// ✅ Detail route (e.g. /movie/123)
-app.get("/api/:category/:id", async (req, res) => {
-  const { category, id } = req.params;
-  try {
-    const response = await axios.get(`${TMDB_BASE_URL}/${category}/${id}`, {
-      params: {
-        api_key: process.env.TMDB_API_KEY,
-        language: "en-US",
-      },
-    });
-    res.json(response.data);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch detail" });
-  }
-});
-
-// ✅ Search (e.g. /search/movie?query=batman)
+/* ✅ SEARCH route should be first to prevent route conflict */
 app.get("/api/search/:category", async (req, res) => {
   const { category } = req.params;
   const { query } = req.query;
@@ -99,7 +35,62 @@ app.get("/api/search/:category", async (req, res) => {
   }
 });
 
-// ✅ Category List (e.g. /movie/popular)
+/* ✅ Videos (e.g. /movie/123/videos) */
+app.get("/api/:category/:id/videos", async (req, res) => {
+  const { category, id } = req.params;
+  try {
+    const response = await axios.get(`${TMDB_BASE_URL}/${category}/${id}/videos`, {
+      params: { api_key: process.env.TMDB_API_KEY },
+    });
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch videos" });
+  }
+});
+
+/* ✅ Credits (e.g. /movie/123/credits) */
+app.get("/api/:category/:id/credits", async (req, res) => {
+  const { category, id } = req.params;
+  try {
+    const response = await axios.get(`${TMDB_BASE_URL}/${category}/${id}/credits`, {
+      params: { api_key: process.env.TMDB_API_KEY },
+    });
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch credits" });
+  }
+});
+
+/* ✅ Similar (e.g. /movie/123/similar) */
+app.get("/api/:category/:id/similar", async (req, res) => {
+  const { category, id } = req.params;
+  try {
+    const response = await axios.get(`${TMDB_BASE_URL}/${category}/${id}/similar`, {
+      params: { api_key: process.env.TMDB_API_KEY },
+    });
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch similar movies" });
+  }
+});
+
+/* ✅ Detail route (e.g. /movie/123) */
+app.get("/api/:category/:id", async (req, res) => {
+  const { category, id } = req.params;
+  try {
+    const response = await axios.get(`${TMDB_BASE_URL}/${category}/${id}`, {
+      params: {
+        api_key: process.env.TMDB_API_KEY,
+        language: "en-US",
+      },
+    });
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch detail" });
+  }
+});
+
+/* ✅ Category list route (e.g. /movie/popular) */
 app.get("/api/:category/:type", async (req, res) => {
   const { category, type } = req.params;
   const validCategories = ["movie", "tv"];
