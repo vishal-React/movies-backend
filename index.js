@@ -15,9 +15,12 @@ const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 app.get("/api/:category/:id/videos", async (req, res) => {
   const { category, id } = req.params;
   try {
-    const response = await axios.get(`${TMDB_BASE_URL}/${category}/${id}/videos`, {
-      params: { api_key: process.env.TMDB_API_KEY }
-    });
+    const response = await axios.get(
+      `${TMDB_BASE_URL}/${category}/${id}/videos`,
+      {
+        params: { api_key: process.env.TMDB_API_KEY },
+      }
+    );
     res.json(response.data);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch videos" });
@@ -28,9 +31,12 @@ app.get("/api/:category/:id/videos", async (req, res) => {
 app.get("/api/:category/:id/credits", async (req, res) => {
   const { category, id } = req.params;
   try {
-    const response = await axios.get(`${TMDB_BASE_URL}/${category}/${id}/credits`, {
-      params: { api_key: process.env.TMDB_API_KEY }
-    });
+    const response = await axios.get(
+      `${TMDB_BASE_URL}/${category}/${id}/credits`,
+      {
+        params: { api_key: process.env.TMDB_API_KEY },
+      }
+    );
     res.json(response.data);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch credits" });
@@ -41,9 +47,12 @@ app.get("/api/:category/:id/credits", async (req, res) => {
 app.get("/api/:category/:id/similar", async (req, res) => {
   const { category, id } = req.params;
   try {
-    const response = await axios.get(`${TMDB_BASE_URL}/${category}/${id}/similar`, {
-      params: { api_key: process.env.TMDB_API_KEY }
-    });
+    const response = await axios.get(
+      `${TMDB_BASE_URL}/${category}/${id}/similar`,
+      {
+        params: { api_key: process.env.TMDB_API_KEY },
+      }
+    );
     res.json(response.data);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch similar movies" });
@@ -57,8 +66,8 @@ app.get("/api/:category/:id", async (req, res) => {
     const response = await axios.get(`${TMDB_BASE_URL}/${category}/${id}`, {
       params: {
         api_key: process.env.TMDB_API_KEY,
-        language: "en-US"
-      }
+        language: "en-US",
+      },
     });
     res.json(response.data);
   } catch (err) {
@@ -79,11 +88,13 @@ app.get("/api/search/:category", async (req, res) => {
     const response = await axios.get(`${TMDB_BASE_URL}/search/${category}`, {
       params: {
         api_key: process.env.TMDB_API_KEY,
-        query
-      }
+        query,
+        language: "en-US",
+      },
     });
     res.json(response.data);
   } catch (err) {
+    console.error("TMDB Search Error:", err.message);
     res.status(500).json({ error: "Failed to search" });
   }
 });
@@ -103,8 +114,8 @@ app.get("/api/:category/:type", async (req, res) => {
       params: {
         api_key: process.env.TMDB_API_KEY,
         language: "en-US",
-        page: req.query.page || 1
-      }
+        page: req.query.page || 1,
+      },
     });
     res.json(response.data);
   } catch (err) {
