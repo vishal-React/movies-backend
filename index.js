@@ -4,7 +4,6 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 
 dotenv.config();
-
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -12,11 +11,9 @@ app.use(cors());
 
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
-// ✅ Dynamic route for both movies and tv (e.g., /api/movies/popular or /api/tv/top_rated)
+// ✅ Dynamic route for category + type (e.g. /movie/popular)
 app.get("/api/:category/:type", async (req, res) => {
   const { category, type } = req.params;
-
-  // Validate category and type
   const validCategories = ["movie", "tv"];
   const validTypes = ["popular", "upcoming", "top_rated", "on_the_air"];
 
@@ -32,15 +29,92 @@ app.get("/api/:category/:type", async (req, res) => {
         page: req.query.page || 1,
       },
     });
-
     res.json(response.data);
   } catch (err) {
     console.error("TMDB API Error:", err.message);
-    if (err.response) {
-      console.error("Status:", err.response.status);
-      console.error("Data:", err.response.data);
-    }
     res.status(500).json({ error: "Failed to fetch data from TMDB" });
+  }
+});
+
+// ✅ Detail route (e.g. /movie/123)
+app.get("/api/:category/:id", async (req, res) => {
+  const { category, id } = req.params;
+  try {
+    const response = await axios.get(`${TMDB_BASE_URL}/${category}/${id}`, {
+      params: {
+        api_key: process.env.TMDB_API_KEY,
+        language: "en-US",
+      },
+    });
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch detail" });
+  }
+});
+
+// ✅ Videos (e.g. /movie/123/videos)
+app.get("/api/:category/:id/videos", async (req, res) => {
+  const { category, id } = req.params;
+  try {
+    const response = await axios.get(`${TMDB_BASE_URL}/${category}/${id}/videos`, {
+      params: {
+        api_key: process.env.TMDB_API_KEY,
+      },
+    });
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch videos" });
+  }
+});
+
+// ✅ Credits (e.g. /movie/123/credits)
+app.get("/api/:category/:id/credits", async (req, res) => {
+  const { category, id } = req.params;
+  try {
+    const response = await axios.get(`${TMDB_BASE_URL}/${category}/${id}/credits`, {
+      params: {
+        api_key: process.env.TMDB_API_KEY,
+      },
+    });
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch credits" });
+  }
+});
+
+// ✅ Similar (e.g. /movie/123/similar)
+app.get("/api/:category/:id/similar", async (req, res) => {
+  const { category, id } = req.params;
+  try {
+    const response = await axios.get(`${TMDB_BASE_URL}/${category}/${id}/similar`, {
+      params: {
+        api_key: process.env.TMDB_API_KEY,
+      },
+    });
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch similar movies" });
+  }
+});
+
+// ✅ Search (e.g. /search/movie?query=batman)
+app.get("/api/search/:category", async (req, res) => {
+  const { category } = req.params;
+  const { query } = req.query;
+  if (!query) {
+    return res.status(400).json({ error: "Query param is required" });
+  }
+
+  try {
+    const response = await axios.get(`${TMDB_BASE_URL}/search/${category}`, {
+      params: {
+        api_key: process.env.TMDB_API_KEY,
+        query,
+      },
+    });
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to search" });
   }
 });
 
